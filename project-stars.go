@@ -32,11 +32,13 @@ func (l Stars) Swap(i, j int) {
 }
 
 func getStars() Stars {
+	var stars Stars
+
 	csvfile, err := os.Open("HYG-Database/hygdata_v3.csv")
 
 	if err != nil {
 		fmt.Println(err)
-		return
+		return stars
 	}
 
 	defer csvfile.Close()
@@ -48,8 +50,6 @@ func getStars() Stars {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
-	var stars Stars
 
 	for i, row := range rawCSVdata {
 		if i == 0 {
@@ -76,16 +76,35 @@ func getStars() Stars {
 	}
 
 	sort.Sort(stars)
+	return stars;
+}
+
+const scale = 10
+
+func draw(stars Stars) {
+	f, _ := os.Create("stars.svg")
+	defer f.Close()
+
+	width := 500
+	height := 500
+	canvas := svg.New(f)
+	canvas.Start(width, height)
+	defer canvas.End()
+
+	for i, star := range stars {
+		if i > 100 {
+			break
+		}
+		canvas.Circle(
+			int(star.X * scale), 
+			int(star.Y * scale), 
+			int((2 - star.Mag) * scale))
+		fmt.Printf("%s: %f - (%f, %f, %f)\n",
+			star.Proper, star.Mag, star.X, star.Y, star.Z)
+	}
 }
 
 func main() {
 	var stars Stars = getStars()
-
-	for i, star := range stars {
-		if i > 20 {
-			break
-		}
-		fmt.Printf("%s: %f - (%f, %f, %f)\n",
-			star.Proper, star.Mag, star.X, star.Y, star.Z)
-	}
+	draw(stars)
 }
