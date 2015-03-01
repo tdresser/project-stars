@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"github.com/ajstarks/svgo"
 	"os"
 	"sort"
 	"strconv"
@@ -30,7 +31,7 @@ func (l Stars) Swap(i, j int) {
 	l[i], l[j] = l[j], l[i]
 }
 
-func main() {
+func getStars() Stars {
 	csvfile, err := os.Open("HYG-Database/hygdata_v3.csv")
 
 	if err != nil {
@@ -60,6 +61,10 @@ func main() {
 		var x, _ = strconv.ParseFloat(row[17], 64)
 		var y, _ = strconv.ParseFloat(row[18], 64)
 		var z, _ = strconv.ParseFloat(row[19], 64)
+
+		if proper == "Sol" {
+			continue
+		}
 		star := Star{
 			Proper: proper,
 			Mag:    mag,
@@ -71,6 +76,10 @@ func main() {
 	}
 
 	sort.Sort(stars)
+}
+
+func main() {
+	var stars Stars = getStars()
 
 	for i, star := range stars {
 		if i > 20 {
