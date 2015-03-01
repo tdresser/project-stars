@@ -12,6 +12,7 @@ import (
 
 type Star struct {
 	Proper string
+	Con    string
 	Mag    float64
 	X      float64
 	Y      float64
@@ -58,6 +59,7 @@ func getStars() Stars {
 		}
 
 		var proper = row[6]
+		var con = row[29]
 		var mag, _ = strconv.ParseFloat(row[13], 64)
 		var x, _ = strconv.ParseFloat(row[17], 64)
 		var y, _ = strconv.ParseFloat(row[18], 64)
@@ -68,6 +70,7 @@ func getStars() Stars {
 		}
 		star := Star{
 			Proper: proper,
+			Con:    con,
 			Mag:    mag,
 			X:      x,
 			Y:      y,
@@ -77,7 +80,7 @@ func getStars() Stars {
 	}
 
 	sort.Sort(stars)
-	return stars;
+	return stars
 }
 
 const scale = 10
@@ -93,26 +96,36 @@ func draw(stars Stars) {
 	defer canvas.End()
 
 	for i, star := range stars {
-		if i > 10000 {
+		if i > 20000 {
 			break
 		}
 
-		if (star.Z < 0) {
+		if star.Z < 0 {
 			continue
 		}
-		
 
 		var x = star.X / star.Z * 100
 		var y = star.Y / star.Z * 100
-		var mag = math.Pow((5 - star.Mag), 0.7) * 0.8
+		var mag = math.Pow((5-star.Mag), 0.7) * 0.8
+
+		var style = ""
+
+		if star.Proper == "Polaris" {
+			style = "fill:blue"
+		}
+
+		if star.Con == "Peg" {
+			style = "fill:red"
+		}
 
 		canvas.Circle(
-			int(x * scale), 
-			int(y * scale), 
-			int(mag * scale))
+			int(x*scale),
+			int(y*scale),
+			int(mag*scale),
+			style)
 
-//		fmt.Printf("%s: %f - (%f, %f, %f)\n",
-//			star.Proper, star.Mag, star.X, star.Y, star.Z)
+		//		fmt.Printf("%s: %f - (%f, %f, %f)\n",
+		//			star.Proper, star.Mag, star.X, star.Y, star.Z)
 	}
 }
 
