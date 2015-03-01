@@ -97,9 +97,14 @@ func draw(stars Stars) {
 			break
 		}
 
+		if (star.Z < 0) {
+			continue
+		}
+		
+
 		var x = star.X / star.Z * 100
 		var y = star.Y / star.Z * 100
-		var mag = math.Pow((5 - star.Mag), 0.3) * 0.8
+		var mag = math.Pow((5 - star.Mag), 0.7) * 0.8
 
 		canvas.Circle(
 			int(x * scale), 
