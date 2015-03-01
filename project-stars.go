@@ -4,6 +4,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"github.com/ajstarks/svgo"
+	"math"
 	"os"
 	"sort"
 	"strconv"
@@ -92,15 +93,21 @@ func draw(stars Stars) {
 	defer canvas.End()
 
 	for i, star := range stars {
-		if i > 100 {
+		if i > 10000 {
 			break
 		}
+
+		var x = star.X / star.Z * 100
+		var y = star.Y / star.Z * 100
+		var mag = math.Pow((5 - star.Mag), 0.3) * 0.8
+
 		canvas.Circle(
-			int(star.X * scale), 
-			int(star.Y * scale), 
-			int((2 - star.Mag) * scale))
-		fmt.Printf("%s: %f - (%f, %f, %f)\n",
-			star.Proper, star.Mag, star.X, star.Y, star.Z)
+			int(x * scale), 
+			int(y * scale), 
+			int(mag * scale))
+
+//		fmt.Printf("%s: %f - (%f, %f, %f)\n",
+//			star.Proper, star.Mag, star.X, star.Y, star.Z)
 	}
 }
 
